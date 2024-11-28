@@ -68,14 +68,11 @@ subprojects {
         }
         repositories {
             maven {
-                url "https://gitlab.com/api/v4/projects/42337336/packages/maven"
-                name "GitLab"
-                credentials(HttpHeaderCredentials) {
-                    name = 'Private-Token'
-                    value = "$System.env.DEPLOY_TOKEN"
-                }
-                authentication {
-                    header(HttpHeaderAuthentication)
+                name "GitHub"
+                url "https://maven.pkg.github.com/dpiat/microservice-common-java"
+                credentials {
+                    username = System.getenv("GITHUB_REGISTRY_USERNAME")
+                    password = System.getenv("GITHUB_REGISTRY_PASSWORD")
                 }
             }
         }
