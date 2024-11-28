@@ -1,0 +1,10 @@
+plugins {
+    id 'java'
+}
+
+version = '0.0.1'
+
+dependencies {
+    // Spring starters
+    implementation "org.springframework.boot:spring-boot-starter-webflux"
+}

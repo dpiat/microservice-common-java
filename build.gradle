@@ -1,0 +1,83 @@
+plugins {
+    id 'java'
+    id 'maven-publish'
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+}
+
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'maven-publish'
+    apply plugin: 'io.spring.dependency-management'
+
+    group 'com.gim.common'
+
+    java {
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(17)
+        }
+    }
+
+    configurations {
+        compileOnly {
+            extendsFrom annotationProcessor
+        }
+    }
+
+    repositories {
+        mavenCentral()
+    }
+
+    dependencyManagement {
+        dependencies {
+            // Spring starters
+            dependency "org.springframework.boot:spring-boot-starter-webflux:${springBootVersion}"
+            dependency "org.springframework.boot:spring-boot-starter-data-r2dbc:${springBootVersion}"
+            dependency "org.springframework.boot:spring-boot-starter-rsocket:${springBootVersion}"
+            dependency "org.springframework.boot:spring-boot-starter-validation:${springBootVersion}"
+            dependency "org.springframework.kafka:spring-kafka:3.2.2"
+            dependency "org.springframework.boot:spring-boot-starter:${springBootVersion}"
+
+            // Jackson
+            dependency 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.4'
+            dependency 'com.fasterxml.jackson.core:jackson-core:2.13.4'
+            dependency 'com.fasterxml.jackson.core:jackson-databind:2.13.4'
+
+            // Aspects
+            dependency "org.aspectj:aspectjrt:${aspectjVersion}"
+            dependency "org.aspectj:aspectjtools:${aspectjVersion}"
+            dependency "org.aspectj:aspectjweaver:${aspectjVersion}"
+
+            // Lombok
+            dependency 'org.projectlombok:lombok:1.18.22'
+
+            // Tests
+            dependency 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+            dependency 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+        }
+    }
+
+    publishing {
+        publications {
+            mavenJava(MavenPublication) {
+                groupId project.group
+                artifactId project.name
+                version project.version
+
+                artifact jar
+            }
+        }
+        repositories {
+            maven {
+                url "https://gitlab.com/api/v4/projects/42337336/packages/maven"
+                name "GitLab"
+                credentials(HttpHeaderCredentials) {
+                    name = 'Private-Token'
+                    value = "$System.env.DEPLOY_TOKEN"
+                }
+                authentication {
+                    header(HttpHeaderAuthentication)
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,5 @@
+rootProject.name = 'common'
+include 'response'
+include 'usecase'
+include 'util'
+include 'event'
